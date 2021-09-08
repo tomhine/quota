@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+import QuoteForm from './components/QuoteForm/QuoteForm';
+import QuoteView from './components/QuoteView/QuoteView';
 
-function App() {
+export default function App() {
+  const [quote, setQuote] = useState({});
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+
+  const nameInputHandler = e => {
+    e.preventDefault();
+    setQuote(c => ({ ...c, name: name, address: address }));
+  };
+
+  const quoteViewRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => quoteViewRef.current,
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <QuoteForm
+        onNameInput={nameInputHandler}
+        setName={setName}
+        setAddress={setAddress}
+      />
+      <QuoteView quote={quote} ref={quoteViewRef} />
+      <button onClick={handlePrint}>Print</button>
     </div>
   );
 }
-
-export default App;
